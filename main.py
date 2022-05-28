@@ -2,7 +2,7 @@ import pickle
 import streamlit as st
 import requests
 
-def fetch_poster(movie_id):
+def ftch_pstr(movie_id):
     url = "https://api.themoviedb.org/3/movie/{}?api_key=8265bd1679663a7ea12ac168da84d2e8&language=en-US".format(movie_id)
     data = requests.get(url)
     data = data.json()
@@ -13,18 +13,18 @@ def fetch_poster(movie_id):
 def recommend(movie):
     index = movies[movies['title'] == movie].index[0]
     distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda x: x[1])
-    recommended_movie_names = []
-    recommended_movie_posters = []
+    movie_name = []
+    movie_poster = []
     for i in distances[1:6]:
         # fetch the movie poster
         movie_id = movies.iloc[i[0]].movie_id
-        recommended_movie_posters.append(fetch_poster(movie_id))
-        recommended_movie_names.append(movies.iloc[i[0]].title)
+        movie_poster.append(ftch_pstr(movie_id))
+        movie_name.append(movies.iloc[i[0]].title)
 
-    return recommended_movie_names,recommended_movie_posters
+    return movie_name,movie_poster
 
 
-st.header('Movie Recommender System')
+st.header('Movie Recommendation for you. ')
 movies = pickle.load(open('movie_list.pkl','rb'))
 similarity = pickle.load(open('sim.pkl','rb'))
 
@@ -35,21 +35,21 @@ selected_movie = st.selectbox(
 )
 
 if st.button('Show Recommendation'):
-    recommended_movie_names,recommended_movie_posters = recommend(selected_movie)
+    movie_name,movie_poster = recommend(selected_movie)
     col1, col2, col3, col4, col5 = st.columns(5)
     with col1:
-        st.text(recommended_movie_names[0])
-        st.image(recommended_movie_posters[0])
+        st.text(movie_name[0])
+        st.image(movie_poster[0])
     with col2:
-        st.text(recommended_movie_names[1])
-        st.image(recommended_movie_posters[1])
+        st.text(movie_name[1])
+        st.image(movie_poster[1])
 
     with col3:
-        st.text(recommended_movie_names[2])
-        st.image(recommended_movie_posters[2])
+        st.text(movie_name[2])
+        st.image(movie_poster[2])
     with col4:
-        st.text(recommended_movie_names[3])
-        st.image(recommended_movie_posters[3])
+        st.text(movie_name[3])
+        st.image(movie_poster[3])
     with col5:
-        st.text(recommended_movie_names[4])
-        st.image(recommended_movie_posters[4])
+        st.text(movie_name[4])
+        st.image(movie_poster[4])
